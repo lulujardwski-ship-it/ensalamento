@@ -1,0 +1,51 @@
+name: Verificar aplicação
+on:
+  push:
+    branches: [main, "codex/**"]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: ensalamento_test
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: local-ci-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U test -d ensalamento_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Instalar compilador e dependências
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ nlohmann-json3-dev
+          python -m pip install -r requirements.txt pytest
+      - name: Compilar núcleo
+        run: python scripts/build_core.py
+      - name: Testar regras e API
+        env:
+          TEST_POSTGRES_URL: postgresql://test:local-ci-only@localhost:5432/ensalamento_test
+        run: python -m pytest -q
+      - name: Verificar sintaxe JavaScript
+        run: find web -name '*.js' -print -exec node --check {} \;
+      - name: Verificar compilação Python
+        run: python -m compileall -q server scripts
+      - name: Construir contêiner de produção
+        run: docker build -t ensalamento:test .
