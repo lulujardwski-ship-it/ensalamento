@@ -1,0 +1,13 @@
+{
+  "measured_on": "2026-09-29",
+  "dataset": "500 synthetic classes / 500 meetings / 60 rooms, deterministic generator",
+  "platform": "Windows-11-10.0.22621-SP0",
+  "compiler": "Zig 0.16.0 c++, C++17, -O2",
+  "runs": 3,
+  "wall_time_ms": [571.01, 575.68, 565.13],
+  "median_wall_time_ms": 571.01,
+  "allocated": 500,
+  "conflicts": 0,
+  "candidate_evaluations": 60500,
+  "scope": "Full process wall time, including executable startup, model parsing, conflict analysis and JSON serialization. Local measurement, not a production SLA."
+}
