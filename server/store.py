@@ -62,6 +62,9 @@ class Store:
         with self.connection() as conn:
             value_type = "JSONB" if self.postgres else "TEXT"
             if self.postgres:
+                # Workers e réplicas podem iniciar juntos. IF NOT EXISTS não
+                # serializa DDL nem REVOKE; o bloqueio dura até o commit.
+                conn.execute("SELECT pg_advisory_xact_lock(184337, 1)")
                 # Fora de public: nunca adicionar este schema aos exposed schemas do Supabase.
                 conn.execute("CREATE SCHEMA IF NOT EXISTS ensalamento")
                 conn.execute("REVOKE ALL ON SCHEMA ensalamento FROM PUBLIC")

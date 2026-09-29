@@ -64,3 +64,22 @@ def test_postgres_application_data_is_outside_public_schema(store):
         public = conn.execute("SELECT to_regclass('public.application_state')").fetchone()[0]
     assert actual is not None
     assert public is None
+
+
+def test_multiple_postgres_workers_initialize_without_losing_data():
+    url = os.getenv('TEST_POSTGRES_URL')
+    if not url:
+        pytest.skip('TEST_POSTGRES_URL not set; PostgreSQL coverage runs in CI')
+    original = Store(url)
+    original.update(None, lambda state: state['settings'].update(boot_probe='preserved'))
+    before = original.read()
+    ready = Barrier(8)
+
+    def boot_worker(_):
+        ready.wait(timeout=10)
+        return Store(url).read()
+
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        for _ in range(3):
+            assert list(pool.map(boot_worker, range(8))) == [before] * 8
+    assert original.read() == before
