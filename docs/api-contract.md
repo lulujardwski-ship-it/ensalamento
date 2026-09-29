@@ -11,6 +11,7 @@ API JSON, nomes `snake_case`, raiz configurável `API_BASE` (mesma origem em des
 ## Leitura
 - `GET /api/bootstrap?period_id=...` → `{revision,user,csrf_token,mode:'draft'|'published',periods,campuses,buildings,resources,courses,subjects,rooms,classes,meetings,allocations,settings,published_version,versions,audit,users}`. Admin recebe rascunho integral. Coordenador recebe apenas suas turmas/cursos e dados físicos. Professor recebe apenas aulas vinculadas ao seu e-mail na versão publicada. Aluno recebe apenas versão publicada. Sem publicação: listas acadêmicas/allocations vazias e `published_version:null`; nunca expõe rascunho. `versions`, `audit`, `users` são vazios ou omitidos para consultas sem permissão. `settings.weights={capacity,building,resources,stability}`.
 - `GET /api/versions?period_id=...` lista metadados (admin/coordenador).
+- `GET /api/bootstrap?period_id=...&view=published` permite a admin/coordenador consultar a versão oficial. O coordenador continua limitado aos seus cursos. O catálogo `teachers` contém apenas `id`, `name` e `email`; versões publicadas preservam os nomes dos professores no snapshot.
 - `GET /api/compare?period_id=...` → `{changes:[{meeting_id,before,after,kind}],previous_version}` (admin).
 - `GET /api/schedule?period_id=...&class_id=...&date=YYYY-MM-DD&view=day|week` → `{events,current,next,published_version,date,timezone}`. Professor é filtrado pelo e-mail autenticado; `class_id` não amplia permissões.
 - `GET /api/calendar.ics?period_id=...&class_id=...&date=YYYY-MM-DD` exporta a semana oficial.

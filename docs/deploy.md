@@ -11,6 +11,8 @@ privada do banco em issues, commits, capturas de tela ou conversas públicas.
    serviço consumidor, usar a conexão **Session pooler** com suporte IPv4, conforme a
    disponibilidade da conta. Acrescentar `sslmode=require` à conexão de produção.
 3. Guardar o valor como `DATABASE_URL` no Render, não no código ou em `web/config.js`.
+   Como alternativa, omitir a senha da URI e salvá-la separadamente em `PGPASSWORD`
+   no ambiente do Render. Isso evita problemas de codificação dos caracteres da senha.
 4. O backend cria sua estrutura ao iniciar. Usar um usuário de banco dedicado e limitar o
    acesso. As tabelas da aplicação não devem ser liberadas para leitura/escrita anônima pela
    API REST do Supabase. O navegador fala apenas com a API do projeto.
@@ -34,6 +36,7 @@ Consultar [as opções de conexão do Supabase](https://supabase.com/docs/guides
 |---|---|
 | `APP_ENV` | `production` |
 | `DATABASE_URL` | Conexão PostgreSQL privada com TLS |
+| `PGPASSWORD` | Senha privada do banco, quando omitida de `DATABASE_URL` |
 | `SECRET_KEY` | Segredo aleatório de pelo menos 32 caracteres |
 | `FRONTEND_URL` | URL completa do frontend, sem fragmento |
 | `ADMIN_EMAILS` | E-mails reais autorizados como administradores, separados por vírgula |

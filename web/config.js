@@ -2,7 +2,7 @@
    Em GitHub Pages, API_BASE deve apontar para o serviço HTTPS publicado no Render.
    Se estiver vazio, o site oferece somente o exemplo de consulta e a documentação. */
 window.ENSALAMENTO_CONFIG = Object.freeze({
-  API_BASE: '',
+  API_BASE: 'https://ensalamento-api.onrender.com',
   TIMEZONE: 'America/Sao_Paulo',
   INSTITUTION: '',
   INSTITUTION_LOGO: '',
